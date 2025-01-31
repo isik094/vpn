@@ -9,7 +9,8 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
+        "defstudio/telegraph": "^1.56",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9"
     },

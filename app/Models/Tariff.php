@@ -28,7 +28,7 @@ class Tariff extends Model
      * @param string $lang
      * @return array
      */
-    public static function getTariffButtons(string $lang): array
+    public static function getButtons(string $lang): array
     {
         if (!LanguageEnum::tryFrom($lang)) {
             \Log::error('The language selected is incorrect.');

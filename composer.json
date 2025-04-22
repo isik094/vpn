@@ -10,7 +10,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "ext-http": "*",
         "defstudio/telegraph": "^1.56",
         "endroid/qr-code": "^6.0",
         "laravel/framework": "^11.31",

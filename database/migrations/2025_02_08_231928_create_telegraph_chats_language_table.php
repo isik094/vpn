@@ -33,6 +33,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropForeign(['chat_id']);
+        });
+
         Schema::dropIfExists('telegraph_chat_language');
     }
 };

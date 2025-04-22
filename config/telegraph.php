@@ -13,7 +13,7 @@ return [
      * Sets Telegraph messages default parse mode
      * allowed values: html|markdown|MarkdownV2
      */
-    'default_parse_mode' => Telegraph::PARSE_HTML,
+    'default_parse_mode' => Telegraph::PARSE_MARKDOWN,
 
     'webhook' => [
         /*
@@ -28,7 +28,7 @@ return [
          *
          * For reference, see https://docs.defstudio.it/telegraph/webhooks/overview
          */
-        'handler' => DefStudio\Telegraph\Handlers\EmptyWebhookHandler::class,
+        'handler' => \App\Telegram\Handler::class,
 
         /*
          * Middleware to be applied to the webhook route
@@ -91,17 +91,17 @@ return [
         /*
          * if enabled, allows callback queries from unregistered chats
          */
-        'allow_callback_queries_from_unknown_chats' => false,
+        'allow_callback_queries_from_unknown_chats' => true,
 
         /*
          * if enabled, allows messages and commands from unregistered chats
          */
-        'allow_messages_from_unknown_chats' => false,
+        'allow_messages_from_unknown_chats' => true,
 
         /*
          * if enabled, store unknown chats as new TelegraphChat models
          */
-        'store_unknown_chats_in_db' => false,
+        'store_unknown_chats_in_db' => true,
     ],
 
     /*
@@ -112,8 +112,8 @@ return [
      * Chat model must be or extend `DefStudio\Telegraph\Models\TelegraphChat::class`
      */
     'models' => [
-        'bot' => DefStudio\Telegraph\Models\TelegraphBot::class,
-        'chat' => DefStudio\Telegraph\Models\TelegraphChat::class,
+        'bot' => \App\Models\TelegraphBot::class,
+        'chat' => \App\Models\TelegraphChat::class,
     ],
 
     'storage' => [
@@ -207,4 +207,9 @@ return [
          */
         'start_with' => ['/'],
     ],
+
+    /*
+     * Server IP address
+     */
+    'server_ip' => env('SERVER_IP'),
 ];

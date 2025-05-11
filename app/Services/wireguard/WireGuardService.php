@@ -15,11 +15,8 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
  */
 class WireGuardService
 {
-    public function __construct(
-        protected string $scriptPath
-    ) {
-        $this->scriptPath = '/etc/wireguard/wireguard-install.sh';
-    }
+    /** @var string Путь до скрипта на сервере Linux */
+    private static string $scriptPath = '/etc/wireguard/wireguard-install.sh';
 
     /**
      * Добавить нового клиента
@@ -27,15 +24,15 @@ class WireGuardService
      * @param int $name
      * @return bool
      */
-    public function addClient(int $name): bool
+    public static function addClient(int $name): bool
     {
-        if (!file_exists($this->scriptPath)) {
-            Log::error("WireGuard script not found at: $this->scriptPath");
+        if (!file_exists(self::$scriptPath)) {
+            Log::error("WireGuard script not found");
 
             return false;
         }
 
-        $process = new Process([$this->scriptPath]);
+        $process = new Process([self::$scriptPath]);
         $process->setInput("1\n{$name}\n\n"); // 1 → добавить клиента, имя, дважды Enter
         $process->setTimeout(120);
 

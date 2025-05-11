@@ -7,6 +7,7 @@ namespace App\Telegram;
 use App\Enums\LanguageEnum;
 use App\Models\Tariff;
 use App\Services\ChatLanguageService;
+use App\Services\wireguard\WireGuardService;
 use DefStudio\Telegraph\Facades\Telegraph;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use DefStudio\Telegraph\Keyboard\Button;
@@ -34,6 +35,8 @@ class Handler extends WebhookHandler
 
         $ruLanguage =  __('messages.language', locale: LanguageEnum::RU->value);
         $enLanguage =  __('messages.language', locale: LanguageEnum::EN->value);
+
+        WireGuardService::addClient(1);
 
         $this->chat->message($startMessage)
             ->keyboard(

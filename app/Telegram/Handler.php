@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Telegram;
 
 use App\Models\Tariff;
+use App\Services\PaymentServices;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use DefStudio\Telegraph\Keyboard\Keyboard;
 use Illuminate\Support\Stringable;
@@ -35,13 +36,19 @@ class Handler extends WebhookHandler
     {
         $chat = $this->chat;
         $countMonth = $this->data->get('count_month');
+        $tariff = Tariff::where('count_month', $countMonth)
+            ->where('status', true)
+            ->select('id', 'count_month')
+            ->first();
 
-        if (!Tariff::where('count_month', $countMonth)->exists()) {
-            $chat->message('The count month selected is incorrect.')->send();
+        if ($tariff === null) {
+            $chat->message('Ошибка, выбран неверный тариф.')->send();
             return;
         }
 
-        $chat->message(__('messages.payment', ['url' => 'https://www.ya.ru']))->send();
+        $paymentServices = new PaymentServices($chat, $tariff);
+
+        $chat->message(__('messages.payment', ['url' => $paymentServices->getPaymentUrl()]))->send();
     }
 
     /**

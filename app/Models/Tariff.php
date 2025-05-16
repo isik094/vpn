@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Enums\LanguageEnum;
 use App\helpers\StrHelper;
 use DefStudio\Telegraph\Keyboard\Button;
 use Illuminate\Database\Eloquent\Model;
@@ -25,18 +26,12 @@ class Tariff extends Model
     /**
      * Получить массив кнопок с активными тарифами
      *
-     * @param string $lang
      * @return array
      */
-    public static function getButtons(string $lang): array
+    public static function getButtons(): array
     {
-        if (!LanguageEnum::tryFrom($lang)) {
-            \Log::error('The language selected is incorrect.');
-            return [];
-        }
-
         $buttons = [];
-        $monthArray = __('messages.month', [], $lang);
+        $monthArray = __('messages.month');
         $countMonths = self::where('status', true)->pluck('count_month')->toArray();
 
         foreach ($countMonths as $countMonth) {

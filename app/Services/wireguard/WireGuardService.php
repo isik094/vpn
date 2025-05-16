@@ -15,9 +15,6 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
  */
 class WireGuardService
 {
-    /** @var string Путь до скрипта на сервере Linux */
-    private static string $scriptPath = '/etc/wireguard/wireguard-install.sh';
-
     /**
      * Добавить нового клиента
      *
@@ -26,22 +23,55 @@ class WireGuardService
      */
     public static function addClient(int $name): bool
     {
-        if (!file_exists(self::$scriptPath)) {
-            Log::error("WireGuard script not found");
+        $scriptPath = '/etc/wireguard/add-wg-client.exp';
 
+        if (!file_exists($scriptPath)) {
+            Log::error('Скрипт не найден.');
             return false;
         }
 
-        $process = new Process([self::$scriptPath]);
-        $process->setInput("1\n{$name}\n\n"); // 1 → добавить клиента, имя, дважды Enter
-        $process->setTimeout(120);
+        $process = new Process([$scriptPath, $name]);
+        $process->setTimeout(10);
 
         try {
             $process->mustRun();
+            Log::info('Упешно создан конфиг WireGuard.');
 
             return true;
-        } catch (ProcessFailedException $e) {
-            Log::error('Failed added wireguard config: ' . $e->getMessage());
+
+        } catch (ProcessFailedException $exception) {
+            Log::error("Ошибка при создании клиента: {$exception->getMessage()}");
+
+            return false;
+        }
+    }
+
+    /**
+     * Удалить клиента
+     *
+     * @param int $name
+     * @return bool
+     */
+    public static function removeClient(int $name): bool
+    {
+        $scriptPath = '/etc/wireguard/remove-wg-client.exp';
+
+        if (!file_exists($scriptPath)) {
+            Log::error('Скрипт не найден.');
+            return false;
+        }
+
+        $process = new Process([$scriptPath, $name]);
+        $process->setTimeout(10);
+
+        try {
+            $process->mustRun();
+            Log::info('Упешно удален конфиг WireGuard.');
+
+            return true;
+
+        } catch (ProcessFailedException $exception) {
+            Log::error("Ошибка при удалении клиента: {$exception->getMessage()}");
 
             return false;
         }

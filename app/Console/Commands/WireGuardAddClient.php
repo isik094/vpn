@@ -19,13 +19,14 @@ class WireGuardAddClient extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Добавляет нового WireGuard клиента через expect-скрипт';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        WireGuardService::addClient(1);
+//        WireGuardService::addClient(2);
+        WireGuardService::removeClient(5);
     }
 }

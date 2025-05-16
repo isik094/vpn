@@ -12,7 +12,7 @@ use DefStudio\Telegraph\Models\TelegraphChat;
  *
  * @class PaymentServices
  */
-class PaymentServices
+class PaymentService
 {
     /** @var int Сумма в рублях за один месяц */
     private const int AMOUNT_ONE_MONTH = 100;
@@ -26,5 +26,10 @@ class PaymentServices
     public function getPaymentUrl(): string
     {
         return 'https://www.ya.ru';
+    }
+
+    public static function markAsPaid()
+    {
+
     }
 }

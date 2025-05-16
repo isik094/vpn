@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Telegram;
 
 use App\Models\Tariff;
-use App\Services\PaymentServices;
+use App\Services\PaymentService;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use DefStudio\Telegraph\Keyboard\Keyboard;
 use Illuminate\Support\Stringable;
@@ -46,7 +46,7 @@ class Handler extends WebhookHandler
             return;
         }
 
-        $paymentServices = new PaymentServices($chat, $tariff);
+        $paymentServices = new PaymentService($chat, $tariff);
 
         $chat->message(__('messages.payment', ['url' => $paymentServices->getPaymentUrl()]))->send();
     }

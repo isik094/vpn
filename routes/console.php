@@ -13,6 +13,6 @@ Artisan::command('telegram:menu', function () {
     $bot = TelegraphBot::find(1);
 
     $bot->registerCommands([
-        'start' => 'Старт VPN бота, для получения инструкций',
+        'start' => 'Старт бота TL-VPN',
     ])->send();
 });

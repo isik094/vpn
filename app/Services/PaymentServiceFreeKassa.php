@@ -84,6 +84,7 @@ class PaymentServiceFreeKassa
         $payment = new Payment();
         $payment->chat_id = $this->chat->id;
         $payment->tariff_id = $this->tariff->id;
+        $payment->server_name = 'germany';
         $payment->status = PaymentStatusEnum::NEW->value;
         $payment->save();
 

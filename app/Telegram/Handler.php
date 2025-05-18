@@ -47,7 +47,15 @@ class Handler extends WebhookHandler
         }
 
         $paymentServices = new PaymentServiceFreeKassa($chat, $tariff);
-        $chat->message(__('messages.payment', ['url' => $paymentServices->getPaymentUrl()]))->send();
+        $paymentUrl = $paymentServices->getPaymentUrl();
+
+        $chat->message("Оплата за выбранный тариф")
+            ->keyboard(function (Keyboard $keyboard) use ($paymentUrl) {
+                return $keyboard->button('💳 Оплатить')->url($paymentUrl);
+            })
+            ->send();
+
+//        $chat->message(__('messages.payment', ['url' => $paymentServices->getPaymentUrl()]))->send();
     }
 
     /**

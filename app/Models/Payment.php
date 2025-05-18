@@ -2,9 +2,21 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * App\Models\Payment
+ *
+ * @property int $id
+ * @property int $chat_id
+ * @property int $tariff_id
+ * @property string $server_name
+ * @property int $status
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
 class Payment extends Model
 {
     protected $fillable = [

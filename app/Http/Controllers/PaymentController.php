@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\PaymentService;
+use App\Services\PaymentServiceFreeKassa;
 
 class PaymentController extends Controller
 {
@@ -18,7 +18,7 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Invalid signature'], 403);
         }
 
-        PaymentService::markAsPaid($request->merchantOrderId);
+        PaymentServiceFreeKassa::markAsPaid($request->merchantOrderId);
 
         return response('YES', 200);
     }

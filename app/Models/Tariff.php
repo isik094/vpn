@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Тарифы
+ *
+ * @property int $id
+ * @property int $count_month
+ * @property bool $status
  */
 class Tariff extends Model
 {
@@ -20,6 +24,7 @@ class Tariff extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'count_month',
     ];
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\helpers;
 
-use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Str;
 
 /**
@@ -37,7 +36,7 @@ class StrHelper extends Str
     public static function declensionWord(int $number, array $forms): string
     {
         if (count($forms) !== 3) {
-            throw new InvalidArgumentException('Pass an array of three forms of the word.');
+            throw new \InvalidArgumentException('Pass an array of three forms of the word.');
         }
 
         if ($number % 10 == 1 && $number % 100 != 11) {
@@ -47,5 +46,20 @@ class StrHelper extends Str
         } else {
             return $forms[2];
         }
+    }
+
+    /**
+     * Экранируем спецсимволы для MarkdownV2
+     *
+     * @param string $text
+     * @return string
+     */
+    public static function escapedText(string $text): string
+    {
+        return str_replace(
+            ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'],
+            ['\_', '\*', '\[', '\]', '\(', '\)', '\~', '\`', '\>', '\#', '\+', '\-', '\=', '\|', '\{', '\}', '\.', '\!'],
+            $text
+        );
     }
 }

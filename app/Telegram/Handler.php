@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Telegram;
 
 use App\Models\Tariff;
-use App\Services\PaymentServiceFreeKassa;
+use App\Models\VpnKey;
+use App\Services\PaymentService;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
+use DefStudio\Telegraph\Keyboard\Button;
 use DefStudio\Telegraph\Keyboard\Keyboard;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Stringable;
 
 /**
@@ -31,14 +34,17 @@ class Handler extends WebhookHandler
      * Формирование оплаты
      *
      * @return void
+     * @throws GuzzleException
+     * @throws \Exception
      */
     public function payment(): void
     {
         $chat = $this->chat;
-        $countMonth = $this->data->get('count_month');
-        $tariff = Tariff::where('count_month', $countMonth)
+        $tariffId = $this->data->get('tariff_id');
+
+        $tariff = Tariff::where('id', $tariffId)
             ->where('status', true)
-            ->select('id', 'count_month')
+            ->select('id', 'count_month', 'amount')
             ->first();
 
         if ($tariff === null) {
@@ -46,16 +52,49 @@ class Handler extends WebhookHandler
             return;
         }
 
-        $paymentServices = new PaymentServiceFreeKassa($chat, $tariff);
-        $paymentUrl = $paymentServices->getPaymentUrl();
+        $paymentService = new PaymentService($chat, $tariff);
+        $wataServiceData = $paymentService->create();
 
-        $chat->message("Оплата за выбранный тариф")
-            ->keyboard(function (Keyboard $keyboard) use ($paymentUrl) {
-                return $keyboard->button('💳 Оплатить')->url($paymentUrl);
-            })
+        $this->chat->message('Для оплаты нажмите кнопку ниже:')
+            ->keyboard(
+                Keyboard::make()
+                    ->button('💳 Оплатить')
+                    ->webApp($paymentService->getUrl($wataServiceData))
+            )
             ->send();
+    }
 
-//        $chat->message(__('messages.payment', ['url' => $paymentServices->getPaymentUrl()]))->send();
+    /**
+     * Техническая поддержка
+     *
+     * @return void
+     */
+    public function support(): void
+    {
+        $this->chat->message(__('messages.support'))->send();
+    }
+
+    /**
+     * Список ключей пользователя
+     *
+     * @return void
+     */
+    public function keys(): void
+    {
+        $chat = $this->chat;
+        $chat->message(VpnKey::listKey($chat))
+            ->markdownV2()
+            ->send();
+    }
+
+    /**
+     * Правила использования VPN
+     *
+     * @return void
+     */
+    public function policy(): void
+    {
+        $this->chat->message(__('messages.policy'))->send();
     }
 
     /**
@@ -64,9 +103,25 @@ class Handler extends WebhookHandler
      * @param Stringable $text
      * @return void
      */
-    protected function handleUnknownCommand(Stringable $text): void
+    public function handleUnknownCommand(Stringable $text): void
     {
-        $this->reply('Я еще не научился выполнять данную команду, предложи ее по электронноц почте');
+        $response = "🤖 *Ой-ой!*\n\n"
+            . "Мой код не содержит команды `" . $text . "`\n\n"
+            . "Давайте лучше выберем что-то из *списка ниже*:";
+
+        $this->chat->message($response)
+            ->keyboard(Keyboard::make()->buttons([
+                Button::make('▶️ Старт')->action('start'),
+                Button::make('🔑 Мои ключи')->action('keys'),
+                Button::make('📜 Правила')->action('policy'),
+                Button::make('🆘 Поддержка')->action('support'),
+            ]))
+            ->send();
+
+        \Log::warning("Unknown command", [
+            'user' => $this->chat->id,
+            'message' => (string)$text
+        ]);
     }
 
     /**
@@ -77,6 +132,15 @@ class Handler extends WebhookHandler
      */
     protected function handleChatMessage(Stringable $text): void
     {
-        $this->reply('Выполнял через команду, я не хочу с тобой общаться');
+        if ($text->startsWith('/')) {
+            $this->handleUnknownCommand($text);
+            return;
+        }
+
+        $response = "📝 *Вы прислали текст:*\n\"$text\"\n\n"
+            . "Я бот для работы с VPN ключами и не понимаю произвольные сообщения.\n\n"
+            . "Пожалуйста, используйте команды из меню.";
+
+        $this->chat->message($response)->send();
     }
 }

@@ -209,7 +209,7 @@ return [
     ],
 
     /*
-     * Server IP address
+     * Telegram bot url
      */
-    'server_ip' => env('SERVER_IP'),
+    'tg_bot_url' => 'https://t.me/tl_vpn_bot',
 ];

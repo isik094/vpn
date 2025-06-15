@@ -4,23 +4,9 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-/**
- * Статус платежа
- */
-enum PaymentStatusEnum: int
+enum PaymentStatusEnum: string
 {
-    /** Новый */
-    case NEW = 0;
+    case OPENED = 'Opened';
 
-    /** Оплачен */
-    case PAID = 1;
-
-    /** Возврат */
-    case RETURN = 6;
-
-    /** Ошибка */
-    case ERROR = 8;
-
-    /** Отмена */
-    case CANCEL = 9;
+    case CLOSED = 'Closed';
 }

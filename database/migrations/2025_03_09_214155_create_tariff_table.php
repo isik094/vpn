@@ -19,9 +19,29 @@ return new class extends Migration
             $table->boolean('status')
                 ->default(false)
                 ->comment('Статус');
+            $table->decimal('amount')
+                ->comment('Сумма');
 
             $table->comment('Тарифы VPN');
         });
+
+        \DB::table('tariffs')->insert([
+            [
+                'count_month' => 1,
+                'status' => true,
+                'amount' => 100.00
+            ],
+            [
+                'count_month' => 3,
+                'status' => true,
+                'amount' => 275.00
+            ],
+            [
+                'count_month' => 6,
+                'status' => true,
+                'amount' => 550.00
+            ],
+        ]);
     }
 
     /**
@@ -29,6 +49,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tariff');
+        Schema::dropIfExists('tariffs');
     }
 };

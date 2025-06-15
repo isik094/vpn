@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $count_month
  * @property bool $status
+ * @property float $amount
  */
 class Tariff extends Model
 {
@@ -26,6 +27,11 @@ class Tariff extends Model
     protected $fillable = [
         'id',
         'count_month',
+        'amount',
+    ];
+
+    protected $casts = [
+        'amount' => 'float',
     ];
 
     /**
@@ -37,14 +43,19 @@ class Tariff extends Model
     {
         $buttons = [];
         $monthArray = __('messages.month');
-        $countMonths = self::where('status', true)->pluck('count_month')->toArray();
+        $tariffs = self::where('status', true)
+            ->select('id', 'count_month', 'amount')
+            ->get()
+            ->toArray();
 
-        foreach ($countMonths as $countMonth) {
-            $buttonText = $countMonth . ' ' . StrHelper::declensionWord($countMonth, $monthArray);
+        foreach ($tariffs as $tariff) {
+            $buttonText = $tariff['count_month'] . ' '
+                . StrHelper::declensionWord($tariff['count_month'], $monthArray)
+                . " ({$tariff['amount']} ₽)";
 
             $buttons[] = Button::make($buttonText)
                 ->action('payment')
-                ->param('count_month', $countMonth);
+                ->param('tariff_id', $tariff['id']);
         }
 
         return $buttons;

@@ -8,11 +8,14 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Artisan::command('telegram:menu', function () {
+Artisan::command('telegraph:menu', function () {
     /** @var TelegraphBot $bot */
     $bot = TelegraphBot::find(1);
 
     $bot->registerCommands([
-        'start' => 'Старт бота TL-VPN',
+        'start' => 'Старт',
+        'keys' => 'Мои ключи',
+        'policy' => 'Правила использования',
+        'support' => 'Тех. поддержка'
     ])->send();
 });

@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('vpn_keys', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('chat_id')->index()->comment('ID чата');
-            $table->unsignedInteger('tariff_id')->index()->comment('ID тарифа');
-            $table->tinyInteger('status')->comment('Статус платежа');
+            $table->string('key_id')
+                ->unique()
+                ->index()
+                ->comment('ID ключа в Outline VPN');
+            $table->string('name')->comment('Название ключа');
+            $table->string('password')->comment('Пароль');
+            $table->integer('port')->comment('Порт');
+            $table->string('method')->comment('Метод');
+            $table->string('accessUrl')->comment('Ссылка доступа к VPN');
             $table->timestamps();
 
             $table->foreign('chat_id')
@@ -23,12 +30,7 @@ return new class extends Migration
                 ->on('telegraph_chats')
                 ->onDelete('cascade');
 
-            $table->foreign('tariff_id')
-                ->references('id')
-                ->on('tariffs')
-                ->onDelete('cascade');
-
-            $table->comment('Платежи');
+            $table->comment('Ключи VPN');
         });
     }
 
@@ -37,11 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('payments', callback: function (Blueprint $table) {
-            $table->dropForeign(['chat_id']);
-            $table->dropForeign(['tariff_id']);
-        });
-
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('vpn_keys');
     }
 };

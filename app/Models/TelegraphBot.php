@@ -6,5 +6,4 @@ namespace App\Models;
 
 class TelegraphBot extends \DefStudio\Telegraph\Models\TelegraphBot
 {
-
 }

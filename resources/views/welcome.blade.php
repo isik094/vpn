@@ -24,6 +24,6 @@
     </style>
 </head>
 <body>
-<h1>TL-VPN на протоколе WireGuard, чтоб начать использовать получите конфиг в Telegram-боте @tl_vpn_bot</h1>
+<h1>TL-VPN на протоколе Outline VPN, чтоб начать использовать получите ключ в Telegram-боте по <a href="https://t.me/tl_vpn_bot">ссылке</a></h1>
 </body>
 </html>

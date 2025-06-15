@@ -23,6 +23,7 @@ class VerifyWataSignature
      */
     public function handle(Request $request, Closure $next): Response
     {
+        \Log::info('VerifyWataSignature running');
         $rawPayload = $request->getContent();
         $signature = $request->header('X-Signature');
 

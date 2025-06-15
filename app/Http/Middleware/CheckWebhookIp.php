@@ -20,6 +20,7 @@ class CheckWebhookIp
      */
     public function handle(Request $request, Closure $next): Response
     {
+        \Log::info('CheckWebhookIp running');
         $allowedIps = ['62.84.126.140', '51.250.106.150'];
 
         if (!in_array($request->ip(), $allowedIps)) {

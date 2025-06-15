@@ -65,6 +65,9 @@ class PaymentController extends Controller
                     logger()->error('Failed to save vpn');
                     throw new \Exception("Failed to save vpn");
                 }
+
+                $message = $this->getMessage($vpnKey->accessUrl, $vpnKey->expired_at);
+                $payment->chat->message($message)->send();
             }
 
             return response(status: 200);
@@ -75,5 +78,35 @@ class PaymentController extends Controller
             logger()->error('Payment Callback Error: ' . $e->getMessage());
             return response(status: 500);
         }
+    }
+
+    /**
+     * Сгенерировать текст сообщения
+     *
+     * @param string $key
+     * @param string $expiredDate
+     * @return string
+     */
+    private function getMessage(string $key, string $expiredDate): string
+    {
+        return <<<MARKDOWN
+        🚀 *Вот ваш персональный ключ для безопасного подключения к Outline VPN* 🚀
+
+        🔑 *Ключ доступа:*
+        `$key`
+
+        📅 *Действует до:* {$expiredDate}
+
+        📥 *Как подключиться:*
+        1. Скачайте приложение Outline
+        2. Нажмите "+" и вставьте ключ
+        3. Подключитесь одним нажатием!
+
+        🛡️ *Рекомендации:*
+        - Не передавайте ключ третьим лицам
+        - Обновите ключ при подозрении на утечку
+
+        Приятного использования! 🌐✨
+        MARKDOWN;
     }
 }

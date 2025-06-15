@@ -28,6 +28,7 @@ use Nette\Utils\JsonException;
  *
  * @property VpnKey $vpnKey
  * @property Tariff $tariff
+ * @property TelegraphChat $chat
  */
 class Payment extends Model
 {

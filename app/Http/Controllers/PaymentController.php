@@ -26,6 +26,7 @@ class PaymentController extends Controller
      */
     public function callback(PaymentCallbackRequest $request)
     {
+        \Log::info('callback hit');
         try {
             $data = $request->validated();
             /** @var Payment $payment */

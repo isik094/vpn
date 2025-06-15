@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens(except: [
-            'https://tl-vpn.ru/payment/callback',
+            'payment/callback',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

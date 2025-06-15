@@ -6,6 +6,8 @@ use App\Enums\PaymentStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 
 /**
  * App\Models\Payment
@@ -21,6 +23,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $external_id
  * @property string $terminal_name
  * @property string $terminal_public_id
+ * @property string $callback_data
+ * @property string $payment_time
+ *
+ * @property VpnKey $vpnKey
+ * @property Tariff $tariff
  */
 class Payment extends Model
 {
@@ -34,6 +41,8 @@ class Payment extends Model
         'external_id',
         'terminal_name',
         'terminal_public_id',
+        'callback_data',
+        'payment_time',
     ];
 
     /**
@@ -85,5 +94,48 @@ class Payment extends Model
     public function setStatus(PaymentStatusEnum $status): void
     {
         $this->status = $status->value;
+    }
+
+    /**
+     * Задать дату оплаты
+     *
+     * @param string $date
+     * @return void
+     */
+    public function setPaymentTime(string $date): void
+    {
+        $this->payment_time = Carbon::parse($date);
+    }
+
+    /**
+     * Задать данные коллбэк от сервиса WATA
+     *
+     * @param array $data
+     * @return void
+     * @throws JsonException
+     */
+    public function setCallbackData(array $data): void
+    {
+        $this->callback_data = Json::encode($data);
+    }
+
+    /**
+     * Оплачен
+     *
+     * @return bool
+     */
+    public function isPaid(): bool
+    {
+        return $this->status === PaymentStatusEnum::PAID->value;
+    }
+
+    /**
+     * Отклонен
+     *
+     * @return bool
+     */
+    public function isDeclined(): bool
+    {
+        return $this->status === PaymentStatusEnum::DECLINED->value;
     }
 }

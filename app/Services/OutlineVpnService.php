@@ -51,10 +51,11 @@ class OutlineVpnService
      * Сгенерировать ключ VPN
      *
      * @param int $chatId
-     * @return bool
+     * @return VpnKey|null
      * @throws GuzzleException
+     * @throws \Exception
      */
-    public function createKey(int $chatId): bool
+    public function createKey(int $chatId): ?VpnKey
     {
         try {
             $response = $this->client->request('POST', "$this->apiUrl/access-keys");
@@ -74,11 +75,12 @@ class OutlineVpnService
                 $vpnKey->port = $data['port'] ?? null;
                 $vpnKey->method = $data['method'] ?? null;
                 $vpnKey->accessUrl = $data['accessUrl'] ?? null;
+                $vpnKey->save();
 
-                return $vpnKey->save();
+                return $vpnKey;
             }
 
-            return false;
+            return null;
         } catch (\Exception $e) {
             \Log::error("Возникла ошибка при создании ключа VPN {$e->getMessage()}");
 

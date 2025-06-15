@@ -84,4 +84,16 @@ class VpnKey extends Model
 
         return $text;
     }
+
+    /**
+     * Задать время окончания ключа
+     *
+     * @param Tariff $tariff
+     * @param string $date
+     * @return void
+     */
+    public function setExpiredAt(Tariff $tariff, string $date): void
+    {
+        $this->expired_at = Carbon::parse($date)->addMonths($tariff->count_month);
+    }
 }

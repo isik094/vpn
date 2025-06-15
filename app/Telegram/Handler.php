@@ -55,7 +55,7 @@ class Handler extends WebhookHandler
         $paymentService = new PaymentService($chat, $tariff);
         $wataServiceData = $paymentService->create();
 
-        $this->chat->message('Для оплаты нажмите кнопку ниже:')
+        $this->chat->message(__('messages.pay_text'))
             ->keyboard(
                 Keyboard::make()
                     ->button('💳 Оплатить')

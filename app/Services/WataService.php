@@ -54,7 +54,7 @@ class WataService
      * @param string $description
      * @param string $orderId
      * @param string $currency
-     * @return mixed
+     * @return array
      * @throws GuzzleException
      * @throws \Exception
      */

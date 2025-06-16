@@ -6,6 +6,7 @@ use App\Enums\PaymentStatusEnum;
 use App\Http\Requests\PaymentCallbackRequest;
 use App\Models\Payment;
 use App\Services\OutlineVpnService;
+use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
@@ -66,7 +67,7 @@ class PaymentController extends Controller
                     throw new \Exception("Failed to save vpn");
                 }
 
-                $message = $this->getMessage($vpnKey->accessUrl, $vpnKey->expired_at);
+                $message = $this->getMessage($vpnKey->accessUrl, $vpnKey->expired_at, $payment->id);
                 $payment->chat->message($message)->send();
             }
 
@@ -85,26 +86,31 @@ class PaymentController extends Controller
      *
      * @param string $key
      * @param string $expiredDate
+     * @param int $paymentId
      * @return string
      */
-    private function getMessage(string $key, string $expiredDate): string
+    private function getMessage(string $key, string $expiredDate, int $paymentId): string
     {
+        $expiredDateFormatted = Carbon::parse($expiredDate)->format('d.m.Y H:i');
+
         return <<<MARKDOWN
         🚀 *Вот ваш персональный ключ для безопасного подключения к Outline VPN* 🚀
 
         🔑 *Ключ доступа:*
         `$key`
 
-        📅 *Действует до:* {$expiredDate}
+        📅 *Действует до:* {$expiredDateFormatted}
+
+        #️⃣ № заказа *$paymentId*
 
         📥 *Как подключиться:*
         1. Скачайте приложение Outline
         2. Нажмите "+" и вставьте ключ
-        3. Подключитесь одним нажатием!
+        3. Добавьте конфигурацию VPN на смартфон
+        4. Подключитесь!
 
         🛡️ *Рекомендации:*
         - Не передавайте ключ третьим лицам
-        - Обновите ключ при подозрении на утечку
 
         Приятного использования! 🌐✨
         MARKDOWN;

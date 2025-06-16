@@ -91,7 +91,7 @@ class PaymentController extends Controller
      */
     private function getMessage(string $key, string $expiredDate, int $paymentId): string
     {
-        $expiredDateFormatted = Carbon::parse($expiredDate)->format('d.m.Y H:i');
+        $expiredDateFormatted = Carbon::parse($expiredDate)->format('d.m.Y');
 
         return <<<MARKDOWN
         🚀 *Вот ваш персональный ключ для безопасного подключения к Outline VPN* 🚀

@@ -98,6 +98,7 @@ class PaymentController extends Controller
 
         🔑 *Ключ доступа:*
         `$key`
+        🫵 нажмите на ключ чтоб скопировать
 
         📅 *Действует до:* {$expiredDateFormatted}
 

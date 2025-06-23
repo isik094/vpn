@@ -6,6 +6,7 @@ namespace App\Telegram;
 
 use App\Models\Tariff;
 use App\Models\VpnKey;
+use App\Services\OutlineVpnService;
 use App\Services\PaymentService;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use DefStudio\Telegraph\Keyboard\Button;
@@ -52,16 +53,38 @@ class Handler extends WebhookHandler
             return;
         }
 
-        $paymentService = new PaymentService($chat, $tariff);
-        $wataServiceData = $paymentService->create();
+        // TODO Временно пока не работает платежный сервис
+        if ((int) $tariff->id === 4) {
+            $outlineVpnService = new OutlineVpnService();
+            $vpnKey = $outlineVpnService->createKey($this->chat->id);
 
-        $this->chat->message(__('messages.pay_text'))
-            ->keyboard(
-                Keyboard::make()
-                    ->button('💳 Оплатить')
-                    ->webApp($paymentService->getUrl($wataServiceData))
-            )
-            ->send();
+            if ($vpnKey === null) {
+                logger()->error('Failed to create key');
+                throw new \Exception("Failed to create key");
+            }
+
+            $currentDateTime = date('Y-m-d H:i:s');
+            $vpnKey->setExpiredAt($tariff, $currentDateTime);
+
+            if (!$vpnKey->save()) {
+                logger()->error('Failed to save vpn');
+                throw new \Exception("Failed to save vpn");
+            }
+
+            $message = $outlineVpnService->getMessage($vpnKey->accessUrl, $currentDateTime, 0);
+            $this->chat->message($message)->send();
+        } else {
+            $paymentService = new PaymentService($chat, $tariff);
+            $wataServiceData = $paymentService->create();
+
+            $this->chat->message(__('messages.pay_text'))
+                ->keyboard(
+                    Keyboard::make()
+                        ->button('💳 Оплатить')
+                        ->webApp($paymentService->getUrl($wataServiceData))
+                )
+                ->send();
+        }
     }
 
     /**

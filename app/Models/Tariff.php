@@ -49,9 +49,13 @@ class Tariff extends Model
             ->toArray();
 
         foreach ($tariffs as $tariff) {
-            $buttonText = $tariff['count_month'] . ' '
-                . StrHelper::declensionWord($tariff['count_month'], $monthArray)
-                . " ({$tariff['amount']} ₽)";
+            if ((int) $tariff['id'] === 4) {
+                $buttonText = 'Пробный месяц';
+            } else {
+                $buttonText = $tariff['count_month'] . ' '
+                    . StrHelper::declensionWord($tariff['count_month'], $monthArray)
+                    . " ({$tariff['amount']} ₽)";
+            }
 
             $buttons[] = Button::make($buttonText)
                 ->action('payment')

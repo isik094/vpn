@@ -63,15 +63,19 @@ class Handler extends WebhookHandler
                 throw new \Exception("Failed to create key");
             }
 
-            $currentDateTime = date('Y-m-d H:i:s');
-            $vpnKey->setExpiredAt($tariff, $currentDateTime);
+            $vpnKey->setExpiredAt($tariff, date('Y-m-d H:i:s'));
 
             if (!$vpnKey->save()) {
                 logger()->error('Failed to save vpn');
                 throw new \Exception("Failed to save vpn");
             }
 
-            $message = $outlineVpnService->getMessage($vpnKey->accessUrl, $currentDateTime, 0);
+            $message = $outlineVpnService->getMessage(
+                $vpnKey->accessUrl,
+                $vpnKey->expired_at->format('Y-m-d'),
+                0
+            );
+
             $this->chat->message($message)->send();
         } else {
             $paymentService = new PaymentService($chat, $tariff);

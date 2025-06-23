@@ -15,7 +15,8 @@ Artisan::command('telegraph:menu', function () {
     $bot->registerCommands([
         'start' => 'Старт',
         'keys' => 'Мои ключи',
-        'policy' => 'Правила использования',
-        'support' => 'Тех. поддержка'
+        'policy' => 'Политика использования',
+        'support' => 'Тех. поддержка',
+        'privacy' => 'Политика конфиденциальности',
     ])->send();
 });

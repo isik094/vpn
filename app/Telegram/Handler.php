@@ -6,7 +6,6 @@ namespace App\Telegram;
 
 use App\Models\Tariff;
 use App\Models\VpnKey;
-use App\Services\OutlineVpnService;
 use App\Services\PaymentService;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use DefStudio\Telegraph\Keyboard\Button;
@@ -27,7 +26,7 @@ class Handler extends WebhookHandler
     public function start(): void
     {
         $this->chat->message(__('messages.welcome'))
-            ->keyboard(Keyboard::make()->buttons(Tariff::getButtons()))
+            ->keyboard(Keyboard::make()->buttons(Tariff::getButtons(true)))
             ->send();
     }
 
@@ -43,6 +42,10 @@ class Handler extends WebhookHandler
         $chat = $this->chat;
         $tariffId = $this->data->get('tariff_id');
 
+//        if ((int) $tariffId === Tariff::IS_FREE_PERIOD_ID) {
+//
+//        }
+
         $tariff = Tariff::where('id', $tariffId)
             ->where('status', true)
             ->select('id', 'count_month', 'amount')
@@ -53,42 +56,16 @@ class Handler extends WebhookHandler
             return;
         }
 
-        // TODO Временно пока не работает платежный сервис
-        if ((int) $tariff->id === 4) {
-            $outlineVpnService = new OutlineVpnService();
-            $vpnKey = $outlineVpnService->createKey($this->chat->id);
+        $paymentService = new PaymentService($chat, $tariff);
+        $wataServiceData = $paymentService->create();
 
-            if ($vpnKey === null) {
-                logger()->error('Failed to create key');
-                throw new \Exception("Failed to create key");
-            }
-
-            $vpnKey->setExpiredAt($tariff, date('Y-m-d H:i:s'));
-
-            if (!$vpnKey->save()) {
-                logger()->error('Failed to save vpn');
-                throw new \Exception("Failed to save vpn");
-            }
-
-            $message = $outlineVpnService->getMessage(
-                $vpnKey->accessUrl,
-                $vpnKey->expired_at->format('Y-m-d'),
-                0
-            );
-
-            $this->chat->message($message)->send();
-        } else {
-            $paymentService = new PaymentService($chat, $tariff);
-            $wataServiceData = $paymentService->create();
-
-            $this->chat->message(__('messages.pay_text'))
-                ->keyboard(
-                    Keyboard::make()
-                        ->button('💵 Оплатить по СБП')
-                        ->url($paymentService->getUrl($wataServiceData))
-                )
-                ->send();
-        }
+        $this->chat->message(__('messages.pay_text'))
+            ->keyboard(
+                Keyboard::make()
+                    ->button('💵 Оплатить по СБП')
+                    ->url($paymentService->getUrl($wataServiceData))
+            )
+            ->send();
     }
 
     /**
@@ -125,6 +102,16 @@ class Handler extends WebhookHandler
     }
 
     /**
+     * Политика конфиденциальности
+     *
+     * @return void
+     */
+    public function privacy(): void
+    {
+        $this->chat->message(__('messages.privacy'))->send();
+    }
+
+    /**
      * Обработка неизвестных команд
      *
      * @param Stringable $text
@@ -141,6 +128,7 @@ class Handler extends WebhookHandler
                 Button::make('▶️ Старт')->action('start'),
                 Button::make('🔑 Мои ключи')->action('keys'),
                 Button::make('📜 Правила')->action('policy'),
+                Button::make('🛡️ Конфиденциальности')->action('privacy'),
                 Button::make('🆘 Поддержка')->action('support'),
             ]))
             ->send();

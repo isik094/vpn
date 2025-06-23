@@ -18,6 +18,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Tariff extends Model
 {
+    /** @var int ID тарифа пробного периода */
+    public const int IS_FREE_PERIOD_ID = 0;
+
     /** @var bool Отключает автозаполненние временных меток */
     public $timestamps = false;
 
@@ -37,9 +40,10 @@ class Tariff extends Model
     /**
      * Получить массив кнопок с активными тарифами
      *
+     * @param bool $isFreePeriod
      * @return array
      */
-    public static function getButtons(): array
+    public static function getButtons(bool $isFreePeriod = false): array
     {
         $buttons = [];
         $monthArray = __('messages.month');
@@ -48,14 +52,16 @@ class Tariff extends Model
             ->get()
             ->toArray();
 
+//        if ($isFreePeriod) {
+//            $buttons[] = Button::make('Пробный период (3 дня)')
+//                ->action('payment')
+//                ->param('tariff_id', self::IS_FREE_PERIOD_ID);
+//        }
+
         foreach ($tariffs as $tariff) {
-            if ((int) $tariff['id'] === 4) {
-                $buttonText = 'Пробный месяц';
-            } else {
-                $buttonText = $tariff['count_month'] . ' '
-                    . StrHelper::declensionWord($tariff['count_month'], $monthArray)
-                    . " ({$tariff['amount']} ₽)";
-            }
+            $buttonText = $tariff['count_month'] . ' '
+                . StrHelper::declensionWord($tariff['count_month'], $monthArray)
+                . " ({$tariff['amount']} ₽)";
 
             $buttons[] = Button::make($buttonText)
                 ->action('payment')

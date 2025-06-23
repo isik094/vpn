@@ -84,8 +84,8 @@ class Handler extends WebhookHandler
             $this->chat->message(__('messages.pay_text'))
                 ->keyboard(
                     Keyboard::make()
-                        ->button('💳 Оплатить')
-                        ->webApp($paymentService->getUrl($wataServiceData))
+                        ->button('💵 Оплатить по СБП')
+                        ->url($paymentService->getUrl($wataServiceData))
                 )
                 ->send();
         }

@@ -26,7 +26,7 @@ class Handler extends WebhookHandler
     public function start(): void
     {
         $this->chat->message(__('messages.welcome'))
-            ->keyboard(Keyboard::make()->buttons(Tariff::getButtons(true)))
+            ->keyboard(Keyboard::make()->buttons(Tariff::getButtons()))
             ->send();
     }
 
@@ -41,10 +41,6 @@ class Handler extends WebhookHandler
     {
         $chat = $this->chat;
         $tariffId = $this->data->get('tariff_id');
-
-//        if ((int) $tariffId === Tariff::IS_FREE_PERIOD_ID) {
-//
-//        }
 
         $tariff = Tariff::where('id', $tariffId)
             ->where('status', true)

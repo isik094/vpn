@@ -8,7 +8,6 @@ use App\Models\Tariff;
 use App\Models\VpnKey;
 use App\Services\PaymentService;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
-use DefStudio\Telegraph\Keyboard\Button;
 use DefStudio\Telegraph\Keyboard\Keyboard;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Stringable;

@@ -6,7 +6,6 @@ use App\Enums\PaymentStatusEnum;
 use App\Http\Requests\PaymentCallbackRequest;
 use App\Models\Payment;
 use App\Services\OutlineVpnService;
-use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
@@ -67,7 +66,7 @@ class PaymentController extends Controller
                     throw new \Exception("Failed to save vpn");
                 }
 
-                $message = $outlineVpnService->getMessage($vpnKey->accessUrl, $vpnKey->expired_at, $payment->id);
+                $message = $outlineVpnService->getMessage($vpnKey->accessUrl, $payment->id);
                 $payment->chat->message($message)->send();
             }
 

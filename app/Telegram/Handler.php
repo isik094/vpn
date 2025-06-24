@@ -117,17 +117,9 @@ class Handler extends WebhookHandler
     {
         $response = "🤖 *Ой-ой!*\n\n"
             . "Мой код не содержит команды `" . $text . "`\n\n"
-            . "Давайте лучше выберем что-то из *списка ниже*:";
+            . "Давайте лучше выберем что-то из *меню*:";
 
-        $this->chat->message($response)
-            ->keyboard(Keyboard::make()->buttons([
-                Button::make('▶️ Старт')->action('start'),
-                Button::make('🔑 Мои ключи')->action('keys'),
-                Button::make('📜 Правила')->action('policy'),
-                Button::make('🛡️ Конфиденциальности')->action('privacy'),
-                Button::make('🆘 Поддержка')->action('support'),
-            ]))
-            ->send();
+        $this->chat->message($response)->send();
 
         \Log::warning("Unknown command", [
             'user' => $this->chat->id,
@@ -150,7 +142,7 @@ class Handler extends WebhookHandler
 
         $response = "📝 *Вы прислали текст:*\n\"$text\"\n\n"
             . "Я бот для работы с VPN ключами и не понимаю произвольные сообщения.\n\n"
-            . "Пожалуйста, используйте команды из меню.";
+            . "Пожалуйста, используйте команды из *меню*.";
 
         $this->chat->message($response)->send();
     }

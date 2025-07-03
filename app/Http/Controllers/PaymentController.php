@@ -52,7 +52,9 @@ class PaymentController extends Controller
 
             if ($payment->isPaid()) {
                 $outlineVpnService = new OutlineVpnService();
-                $vpnKey = $outlineVpnService->createKey($payment->chat_id);
+                $vpnKey = $payment->vpnKey()->exists()
+                    ? $payment->vpnKey
+                    : $outlineVpnService->createKey($payment->chat_id);
 
                 if ($vpnKey === null) {
                     logger()->error('Failed to create key');
@@ -66,7 +68,7 @@ class PaymentController extends Controller
                     throw new \Exception("Failed to save vpn");
                 }
 
-                $message = $outlineVpnService->getMessage($vpnKey->accessUrl, $payment->id);
+                $message = $outlineVpnService->getMessage($vpnKey->accessUrl, $payment->id, (bool) $payment->vpn_key_id);
                 $payment->chat->message($message)->send();
             }
 

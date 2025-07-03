@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Telegram;
 
+use App\helpers\StrHelper;
 use App\Models\Tariff;
 use App\Models\VpnKey;
 use App\Services\PaymentService;
@@ -40,10 +41,13 @@ class Handler extends WebhookHandler
     {
         $chat = $this->chat;
         $tariffId = $this->data->get('tariff_id');
+        $vpnKeyId = StrHelper::isEmpty($this->data->get('vpn_key_id'))
+            ? null
+            : (int) $this->data->get('vpn_key_id');
 
         $tariff = Tariff::where('id', $tariffId)
-            ->where('status', true)
             ->select('id', 'count_month', 'amount')
+            ->where('status', true)
             ->first();
 
         if ($tariff === null) {
@@ -51,13 +55,17 @@ class Handler extends WebhookHandler
             return;
         }
 
-        $paymentService = new PaymentService($chat, $tariff);
+        if ($vpnKeyId !== null && !VpnKey::where('id', $vpnKeyId)->exists()) {
+            $chat->message('Ошибка, задан неверный ключ при продлении тарифа, обратитесь к поддержку.')->send();
+        }
+
+        $paymentService = new PaymentService($chat, $tariff, $vpnKeyId);
         $wataServiceData = $paymentService->create();
 
         $this->chat->message(__('messages.pay_text'))
             ->keyboard(
                 Keyboard::make()
-                    ->button('💵 Оплатить по СБП')
+                    ->button('🏦 СБП')
                     ->url($paymentService->getUrl($wataServiceData))
             )
             ->send();

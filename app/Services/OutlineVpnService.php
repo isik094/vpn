@@ -112,11 +112,19 @@ class OutlineVpnService
      *
      * @param string $key
      * @param int $paymentId
+     * @param bool $extend - флаг продления
      * @return string
      */
-    public function getMessage(string $key, int $paymentId): string
+    public function getMessage(string $key, int $paymentId, bool $extend = false): string
     {
-        return <<<MARKDOWN
+        if ($extend) {
+            $text = <<<MARKDOWN
+        #️⃣ № заказа *$paymentId*
+
+        🔑 *Ключ доступа успешно продлен*
+        MARKDOWN;
+        } else {
+            $text = <<<MARKDOWN
         #️⃣ № заказа *$paymentId*
 
         🔑 *Ключ доступа:*
@@ -126,5 +134,8 @@ class OutlineVpnService
 
         ❗*Не передавайте ключ третьим лицам*❗
         MARKDOWN;
+        }
+
+        return $text;
     }
 }

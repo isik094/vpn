@@ -23,6 +23,9 @@ use DefStudio\Telegraph\Models\TelegraphChat;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $expired_at
+ * @property bool $send_notice
+ *
+ * @property TelegraphChat $chat
  */
 class VpnKey extends Model
 {
@@ -36,6 +39,7 @@ class VpnKey extends Model
         'accessUrl',
         'created_at',
         'expired_at',
+        'send_notice',
     ];
 
     /**
@@ -95,5 +99,20 @@ class VpnKey extends Model
     public function setExpiredAt(Tariff $tariff, string $date): void
     {
         $this->expired_at = Carbon::parse($date)->addMonths($tariff->count_month);
+    }
+
+    /**
+     * Отметить отправку уведомления с тарифами для продления ключа
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function markSendNotice(): void
+    {
+        $this->send_notice = true;
+
+        if (!$this->save()) {
+            throw new \Exception("При сохранении записи произошла ошибка $this->id");
+        }
     }
 }

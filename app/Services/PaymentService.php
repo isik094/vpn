@@ -26,6 +26,7 @@ class PaymentService
     public function __construct(
         public TelegraphChat $chat,
         public Tariff $tariff,
+        public ?int $vpnKeyId = null,
     ) {
         $this->wataService = new WataService();
     }
@@ -43,6 +44,7 @@ class PaymentService
             $model->tariff_id = $this->tariff->id;
             $model->setStatus(PaymentStatusEnum::OPENED);
             $model->server_id = Server::getServerId();
+            $model->vpn_key_id = !empty($this->vpnKeyId) ? $this->vpnKeyId : null;
 
             if (!$model->save()) {
                 throw new Exception('Unable to create payment');

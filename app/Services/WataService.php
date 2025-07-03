@@ -73,7 +73,7 @@ class WataService
             'orderId' => $orderId,
             'successRedirectUrl' => $tgBotUrl,
             'failRedirectUrl' => $tgBotUrl,
-            'expirationDateTime' => Carbon::now()->addDays(5)->endOfDay()->toIso8601String(),
+            'expirationDateTime' => Carbon::now()->addDays()->endOfDay()->toIso8601String(),
         ];
 
         try {

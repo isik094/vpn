@@ -13,10 +13,13 @@ Artisan::command('telegraph:menu', function () {
     $bot = TelegraphBot::find(1);
 
     $bot->registerCommands([
-        'start' => 'Старт',
-        'keys' => 'Мои ключи',
-        'policy' => 'Политика использования',
-        'support' => 'Тех. поддержка',
-        'privacy' => 'Политика конфиденциальности',
+        'start' => '🚀 Старт',
+        'keys' => '🔑 Мои ключи',
+        'support' => '💬 Тех. поддержка',
+        'policy' => '📜 Политика использования',
+        'privacy' => '🔐 Политика конфиденциальности',
     ])->send();
 });
+
+Schedule::command('tariff-send')->hourly();
+Schedule::command('remove-expired-keys')->hourly();

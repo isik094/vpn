@@ -37,9 +37,10 @@ class Tariff extends Model
     /**
      * Получить массив кнопок с активными тарифами
      *
+     * @param int|null $vpnKeyId
      * @return array
      */
-    public static function getButtons(): array
+    public static function getButtons(?int $vpnKeyId = null): array
     {
         $buttons = [];
         $monthArray = __('messages.month');
@@ -53,9 +54,15 @@ class Tariff extends Model
                 . StrHelper::declensionWord($tariff['count_month'], $monthArray)
                 . " ({$tariff['amount']} ₽)";
 
-            $buttons[] = Button::make($buttonText)
+            $action = Button::make($buttonText)
                 ->action('payment')
                 ->param('tariff_id', $tariff['id']);
+
+            if ($vpnKeyId !== null) {
+                $action->param('vpn_key_id', $vpnKeyId);
+            }
+
+            $buttons[] = $action;
         }
 
         return $buttons;

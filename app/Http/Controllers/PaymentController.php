@@ -62,6 +62,7 @@ class PaymentController extends Controller
                 }
 
                 $vpnKey->setExpiredAt($payment->tariff, $data['paymentTime']);
+                $vpnKey->send_notice = false;
 
                 if (!$vpnKey->save()) {
                     logger()->error('Failed to save vpn');

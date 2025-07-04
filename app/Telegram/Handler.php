@@ -56,7 +56,7 @@ class Handler extends WebhookHandler
         }
 
         if ($vpnKeyId !== null && !VpnKey::where('id', $vpnKeyId)->exists()) {
-            $chat->message('Ошибка, задан неверный ключ при продлении тарифа, обратитесь к поддержку.')->send();
+            $chat->message('К сожалению ключ уже удален, через команду /start получите новый ключ.')->send();
         }
 
         $paymentService = new PaymentService($chat, $tariff, $vpnKeyId);
